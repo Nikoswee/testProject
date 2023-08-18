@@ -1,9 +1,11 @@
+package com.nikostest.test_project
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 
-class MainActivity : FlutterActivity() {
+
+class MainActivity : FlutterFragmentActivity() {
 
 }
 //override fun onCreate(savedInstanceState: Bundle?) {
