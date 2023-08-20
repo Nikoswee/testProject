@@ -71,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
     print("Authenticated: $authenticated");
 
     if (authenticated){
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>PaymentScreen()));
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>PaymentScreen(isAuthenticated: true,)));
     }
     }
     } on PlatformException catch (e){
