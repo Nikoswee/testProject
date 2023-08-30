@@ -27,12 +27,11 @@
                 android:resource="@xml/shortcuts" />
 
         </activity>
-        <activity
+        <!-- <activity
             android:name=".PaymentActivity"
             android:label="Payment Screen"
-            android:theme="@style/AppTheme"> <!-- Set your desired theme -->
-            <!-- You can include any necessary intent filters or configuration specific to PaymentActivity here -->
-        </activity>
+            android:theme="@style/AppTheme"> 
+        </activity> -->
 
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

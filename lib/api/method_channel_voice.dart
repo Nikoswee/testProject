@@ -1,11 +1,11 @@
 import 'package:flutter/services.dart';
 
-const MethodChannel _channel = MethodChannel('com.nikostest.test_project/payment');
+const MethodChannel _channel = MethodChannel('com.nikostest.test_project');
 
-Future<void> navigateToPaymentScreen() async {
+Future<void> triggerToast() async {
   try {
-    await _channel.invokeMethod('navigateToPayment');
+    await _channel.invokeMethod('triggerToast');
   } catch (e) {
-    print('Error navigating to PaymentScreen: $e');
+    print('Error Triggering Toast: $e');
   }
 }
