@@ -54,10 +54,23 @@ class MainActivity: FlutterFragmentActivity() {
                     if (flutterEngine == null) {
                         Log.e("MainActivity", "Flutter engine is not initialized")
                     } else {
-                        Log.d("MainActivity", "About to invoke Flutter method")
+                        Log.d("MainActivity", "About to invoke Flutter method on $CHANNEL")
                         MethodChannel(flutterEngine!!.dartExecutor.binaryMessenger, CHANNEL)
-                            .invokeMethod("receivedFeature", "pay")
-                        Log.d("MainActivity", "Flutter method invoked")
+                            .invokeMethod("receivedFeature", "pay", object: MethodChannel.Result {
+                                override fun success(result: Any?) {
+                                    Log.d("MainActivity", "Method invoked successfully")
+                                }
+
+                                override fun error(code: String, message: String?, details: Any?) {
+                                    Log.e("MainActivity", "Error invoking method: $message")
+                                }
+
+                                override fun notImplemented() {
+                                    Log.e("MainActivity", "Method not implemented")
+                                }
+                            })
+
+                        Log.d("MainActivity", "Flutter method invoked on $CHANNEL")
                     }
 
                 }

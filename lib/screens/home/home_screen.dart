@@ -21,19 +21,21 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState(){
     super.initState();
+    print("Intialized flutter home page");
+    print("method channel name: ${_methodChannel.name}");
+    onListenChannel();
     auth = LocalAuthentication();
     auth.isDeviceSupported().then((bool isSupported) => setState((){
     _supportState = isSupported;
     }),
     );
-    onListenChannel();
-
   }
 
 
   void onListenChannel(){
+    print("inside onListenChannel");
     _methodChannel.setMethodCallHandler((call) async{
-      print("method channel was invoked");
+      print("method channel was invoked on flutter side");
       if (call.method == 'receivedFeature'){
         String feature = call.arguments;
         setState(()=>this._receivedFeature = '$feature');
@@ -66,6 +68,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: _getAvailableBiometrics,
                 child: const Text("Get Available Biometrics"),
               ),
+            // const Divider(height: 100),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     onListenChannel();
+            //   },
+            //   child: const Text("Set up method channel"),
+            // ),
               const Divider(height:100),
               ElevatedButton(
                 onPressed: _authenticate,
