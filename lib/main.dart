@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'api/method_channel_voice.dart';
 import 'screens/screens.dart';
 
 
 void main() {
   runApp(const MyApp());
+  FlutterMethodChannel.instance.configureChannel();
 }
 
 

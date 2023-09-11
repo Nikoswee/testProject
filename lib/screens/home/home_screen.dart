@@ -13,7 +13,7 @@ class HomeScreen extends StatefulWidget {
 
 
 class _HomeScreenState extends State<HomeScreen> {
-  final MethodChannel _methodChannel = const MethodChannel('yourapp.com/payment');
+  // final MethodChannel _methodChannel = const MethodChannel('yourapp.com/payment');
   late final LocalAuthentication auth;
   bool _supportState = false;
   String _receivedFeature = 'Listening...';
@@ -21,9 +21,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState(){
     super.initState();
-    print("Intialized flutter home page");
-    print("method channel name: ${_methodChannel.name}");
-    onListenChannel();
+    // print("Intialized flutter home page");
+    // print("method channel name: ${_methodChannel.name}");
+    // onListenChannel();
     auth = LocalAuthentication();
     auth.isDeviceSupported().then((bool isSupported) => setState((){
     _supportState = isSupported;
@@ -32,22 +32,22 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 
-  void onListenChannel(){
-    print("inside onListenChannel");
-    _methodChannel.setMethodCallHandler((call) async{
-      print("method channel was invoked on flutter side");
-      if (call.method == 'receivedFeature'){
-        String feature = call.arguments;
-        setState(()=>this._receivedFeature = '$feature');
-      }
-
-      print("Nikos data: " + _receivedFeature);
-      if (_receivedFeature == 'pay'){
-        _authenticate();
-      }
-
-    });
-  }
+  // void onListenChannel(){
+  //   print("inside onListenChannel");
+  //   _methodChannel.setMethodCallHandler((call) async{
+  //     print("method channel was invoked on flutter side");
+  //     if (call.method == 'receivedFeature'){
+  //       String feature = call.arguments;
+  //       setState(()=>this._receivedFeature = '$feature');
+  //     }
+  //
+  //     print("Nikos data: " + _receivedFeature);
+  //     if (_receivedFeature == 'pay'){
+  //       _authenticate();
+  //     }
+  //
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context){

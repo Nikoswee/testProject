@@ -70,7 +70,7 @@ class MainActivity: FlutterFragmentActivity() {
                                 }
                             })
 
-                        Log.d("MainActivity", "Flutter method invoked on $CHANNEL")
+                        Log.d("MainActivity", "Flutter method invoked")
                     }
 
                 }
