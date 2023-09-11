@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nikostest.test_project">
-<uses-permission android:name="android.permission.USER_BIOMETRIC"/>
+<uses-permission android:name="android.permission.USE_BIOMETRIC"/>
    <application
         android:label="VoiceOrder"
         android:name="${applicationName}"
@@ -22,19 +22,19 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="myapp" android:host="myapp.com" android:pathPrefix="/pay"/>
+            </intent-filter>
+
+
             <meta-data
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
 
         </activity>
-        <!-- <activity
-            android:name=".PaymentActivity"
-            android:label="Payment Screen"
-            android:theme="@style/AppTheme"> 
-        </activity> -->
-
-        <!-- Don't delete the meta-data below.
-             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />

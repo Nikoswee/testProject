@@ -53,7 +53,7 @@
     <string name="successfully_added_task_message">Task added</string>
     <string name="no_data_description" />
 
-    <string name="demo_page">Demo Home Page</string>
+    <string name="pay">Payment Page</string>
 
     <!-- Content Descriptions -->
     <string name="tasks_header_image_content_description">Tasks header image</string>

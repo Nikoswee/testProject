@@ -13,7 +13,7 @@ class HomeScreen extends StatefulWidget {
 
 
 class _HomeScreenState extends State<HomeScreen> {
-  final MethodChannel _methodChannel = const MethodChannel('com.nikostest.test_project');
+  final MethodChannel _methodChannel = const MethodChannel('yourapp.com/payment');
   late final LocalAuthentication auth;
   bool _supportState = false;
   String _receivedFeature = 'Listening...';
@@ -24,31 +24,24 @@ class _HomeScreenState extends State<HomeScreen> {
     auth = LocalAuthentication();
     auth.isDeviceSupported().then((bool isSupported) => setState((){
     _supportState = isSupported;
-    onListenChannel();
     }),
     );
-
-    // _configureMethodChannel();
-    // _handleShortcutIntent();
+    onListenChannel();
 
   }
 
-  //   Future<void> _handleMethodCall(MethodCall call) async {
-  //   if (call.method == 'receivedFeature') {
-  //     String feature = call.arguments;
-  //     print("hello im in _handleMethodCall, feature = $feature");
-  //     setState(() {
-  //       _receivedFeature = feature;
-  //     });
-  //   }
-  // }
 
   void onListenChannel(){
     _methodChannel.setMethodCallHandler((call) async{
+      print("method channel was invoked");
       if (call.method == 'receivedFeature'){
         String feature = call.arguments;
-
         setState(()=>this._receivedFeature = '$feature');
+      }
+
+      print("Nikos data: " + _receivedFeature);
+      if (_receivedFeature == 'pay'){
+        _authenticate();
       }
 
     });
@@ -123,29 +116,4 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  //   void _configureMethodChannel() {
-  //   const platform = MethodChannel('com.nikostest.test_project');
-
-  //   platform.setMethodCallHandler((call) async {
-  //     if (call.method == 'receivedFeature') {
-  //       String feature = call.arguments; // The feature value from native code
-  //       print("feature in flutter:" + feature);
-  //       setState(() {
-  //         _receivedFeature = feature; // Update the state with the received feature
-  //       });
-
-  //       print(_receivedFeature);
-  //     }
-  //   });
-  // }
-
-  // // Add this method to handle sending the intent to native code
-  // Future<void> _handleShortcutIntent() async {
-  //   try {
-  //     const platform = MethodChannel('com.nikostest.test_project');
-  //     await platform.invokeMethod('handleIntent');
-  //   } on PlatformException catch (e) {
-  //     print("Error: ${e.message}");
-  //   }
-  // }
 }
