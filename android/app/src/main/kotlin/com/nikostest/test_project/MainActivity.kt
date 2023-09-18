@@ -3,6 +3,7 @@ package com.nikostest.test_project
 import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.EventChannel  // <-- Add this import
 import io.flutter.plugin.common.MethodChannel
 import android.content.Intent
 import android.net.Uri
@@ -11,35 +12,41 @@ import android.util.Log
 
 class MainActivity: FlutterFragmentActivity() {
     private val CHANNEL = "yourapp.com/payment"
+    private val EVENT_CHANNEL = "yourapp.com/events"
+    private var eventSink: EventChannel.EventSink? = null
 
-//    override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
-//        super.configureFlutterEngine(flutterEngine)
-//        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler {
-//            // handle incoming calls from Flutter
-//        }
-//    }
 
-    // on first launch of the application
+    override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+        super.configureFlutterEngine(flutterEngine)
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, EVENT_CHANNEL).setStreamHandler(
+                object : EventChannel.StreamHandler {
+                    override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+                        eventSink = events
+                        Log.d("MainActivity", "EventChannel onListen called!")
+                        handleIntent(intent)
+                    }
+
+                    override fun onCancel(arguments: Any?) {
+                        eventSink = null
+                        Log.d("MainActivity", "EventChannel onCancel called!")
+                    }
+                }
+        )
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("MainActivity", "onCreate is called with intent: $intent")
 
+
         supportFragmentManager
-            .beginTransaction()
-            .runOnCommit {
-                handleIntent(intent)
-            }
-            .commit()
+                .beginTransaction()
+                .runOnCommit {
+                    handleIntent(intent)
+                }
+                .commit()
     }
 
-
-
-    // when new intent are sent after first launch of the application
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        Log.d("MainActivity", "Received intent: $intent")
-        handleIntent(intent)
-    }
+    // ... rest of your code ...
 
     private fun handleIntent(intent: Intent) {
         val action = intent.action
@@ -54,33 +61,13 @@ class MainActivity: FlutterFragmentActivity() {
                     if (flutterEngine == null) {
                         Log.e("MainActivity", "Flutter engine is not initialized")
                     } else {
-                        Log.d("MainActivity", "About to invoke Flutter method on $CHANNEL")
-                        MethodChannel(flutterEngine!!.dartExecutor.binaryMessenger, CHANNEL)
-                            .invokeMethod("receivedFeature", "pay", object: MethodChannel.Result {
-                                override fun success(result: Any?) {
-                                    Log.d("MainActivity", "Method invoked successfully")
-                                }
+                        Log.d("MainActivity", "About to send 'pay' event to Flutter")
+                        eventSink?.success("pay")
 
-                                override fun error(code: String, message: String?, details: Any?) {
-                                    Log.e("MainActivity", "Error invoking method: $message")
-                                }
-
-                                override fun notImplemented() {
-                                    Log.e("MainActivity", "Method not implemented")
-                                }
-                            })
-
-                        Log.d("MainActivity", "Flutter method invoked on $CHANNEL")
+                        Log.d("MainActivity", "'pay' event sent to Flutter!")
                     }
-
                 }
-
             }
         }
-    }
-
-    private fun invokeFlutterMethod(methodName: String) {
-        MethodChannel(flutterEngine!!.dartExecutor.binaryMessenger, CHANNEL)
-            .invokeMethod(methodName, null)
     }
 }

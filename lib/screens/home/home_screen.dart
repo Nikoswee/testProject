@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
@@ -13,16 +15,17 @@ class HomeScreen extends StatefulWidget {
 
 
 class _HomeScreenState extends State<HomeScreen> {
-  final MethodChannel _methodChannel = const MethodChannel('yourapp.com/payment');
+  // final MethodChannel _methodChannel = const MethodChannel('yourapp.com/payment');
+  static const eventChannel = EventChannel('yourapp.com/events');
   late final LocalAuthentication auth;
   bool _supportState = false;
   String _receivedFeature = 'Listening...';
+  StreamSubscription? _eventSubscription;
 
   @override
   void initState(){
     super.initState();
     print("Intialized flutter home page");
-    print("method channel name: ${_methodChannel.name}");
     onListenChannel();
     auth = LocalAuthentication();
     auth.isDeviceSupported().then((bool isSupported) => setState((){
@@ -32,21 +35,24 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 
-  void onListenChannel(){
-    print("inside onListenChannel");
-    _methodChannel.setMethodCallHandler((call) async{
-      print("method channel was invoked on flutter side");
-      if (call.method == 'receivedFeature'){
-        String feature = call.arguments;
-        setState(()=>this._receivedFeature = '$feature');
-      }
+  void onListenChannel() {
+    _eventSubscription = eventChannel.receiveBroadcastStream().listen(
+          (event) {
+        print("Received event: $event");
+        if (event == 'pay') {
+          _authenticate();
+        }
+      },
+      onError: (error) {
+        print("Error received: $error");
+      },
+    );
+  }
 
-      print("Nikos data: " + _receivedFeature);
-      if (_receivedFeature == 'pay'){
-        _authenticate();
-      }
-
-    });
+  @override
+  void dispose() {
+    super.dispose();
+    _eventSubscription?.cancel();
   }
 
   @override
