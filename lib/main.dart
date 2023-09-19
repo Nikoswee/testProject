@@ -50,6 +50,7 @@ class _HomeCoordinatorState extends State<HomeCoordinator> {
   void initState() {
     super.initState();
     _listenToNativeEvents();
+    _checkForPayEvent();
   }
 
   void _listenToNativeEvents() {
@@ -64,14 +65,28 @@ class _HomeCoordinatorState extends State<HomeCoordinator> {
       },
     );
   }
+  void _checkForPayEvent() async {
+    final prefs = await SharedPreferences.getInstance();
+    bool? invokePayEvent = prefs.getBool("invokePayEvent");
 
-  void _handlePayEvent() {
+    if (invokePayEvent != null && invokePayEvent) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CartScreen(triggerConfirm: true),
+        ),
+      );
+      prefs.setBool("invokePayEvent", false);  // Reset the flag
+    }
+  }
+
+  void _handlePayEvent() async {
+    final prefs = await SharedPreferences.getInstance();
+
     if (ModalRoute.of(context)?.settings.name == "/cart") {
-      // If the current screen is CartScreen, just trigger the authentication.
-      // ... Your logic here
-      // For example, using a global key or a notifier to call _authenticate on the CartScreen.
+      // ... Handle logic if you're already on the CartScreen
     } else {
-      // Navigate to CartScreen with triggerConfirm set to true.
+      prefs.setBool("invokePayEvent", true);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -99,31 +114,3 @@ class _HomeCoordinatorState extends State<HomeCoordinator> {
 
 
 
-// class MyListView extends StatelessWidget {
-
-//   List<String> dataList = [
-//     'Stall 1',
-//     'Stall 2',
-//     'Stall 3',
-//     'Stall 4',
-//     'Stall 5',
-//   ];
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ListView.builder(
-//       itemCount: dataList.length,
-//       itemBuilder: (context, index) {
-//         return ListTile(
-//           title: Text(dataList[index]),
-//           onTap: () {
-//             // Add your logic here when an item is tapped.
-//             // For example, you can navigate to a new page or perform some action.
-//             print('Item ${dataList[index]} is tapped.');
-//           },
-//         );
-//       },
-//     );
-
-//   }
-// }

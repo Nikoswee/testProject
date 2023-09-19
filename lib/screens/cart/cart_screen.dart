@@ -28,11 +28,12 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   void didChangeDependencies() {
-    super.didChangeDependencies();
+    auth = LocalAuthentication();
+    print("boolean triggerConfirm: ${widget.triggerConfirm}");
     if (widget.triggerConfirm) {
       _authenticate();
     }
-    auth = LocalAuthentication();
+    super.didChangeDependencies();
     final cartItems = context.read<CartBloc>().state.items;
     readCartItems(cartItems);
   }
