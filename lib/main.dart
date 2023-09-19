@@ -3,14 +3,20 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:test_project/repo/cart_repo.dart';
 import 'package:test_project/screens/cart/cart_screen.dart';
 import 'bloc/cart_bloc.dart';
 import 'screens/screens.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  final cartRepository = CartRepository(prefs);
+
   runApp(
     BlocProvider(
-      create: (context) => CartBloc(),
+      create: (context) => CartBloc(cartRepository),
       child: const MyApp(),
     ),
   );

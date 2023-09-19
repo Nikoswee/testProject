@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class CartItem {
   final String id;
   final String name;
@@ -23,5 +25,28 @@ class CartItem {
       price: price ?? this.price, // included price in the copy
       quantity: quantity ?? this.quantity,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'price': price,
+      'quantity': quantity,
+    };
+  }
+
+  String toJsonString() {
+    return jsonEncode(toJson());
+  }
+
+  CartItem.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        name = json['name'],
+        price = json['price'].toDouble(),
+        quantity = json['quantity'];
+
+  static CartItem fromJsonString(String jsonString) {
+    return CartItem.fromJson(jsonDecode(jsonString));
   }
 }
