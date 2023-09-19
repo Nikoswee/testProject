@@ -6,6 +6,9 @@ import '../../model/cart.dart';
 class CartBloc extends Bloc<CartEvent, CartState> {
   CartBloc() : super(CartState([])) {
     on<AddToCart>(_mapAddToCartEventToState);
+    on<RemoveFromCart>(_mapRemoveFromCartEventToState);
+    on<IncreaseQuantity>(_mapIncreaseQuantityEventToState);
+    on<DecreaseQuantity>(_mapDecreaseQuantityEventToState);
     // Register other event handlers here...
   }
 
@@ -29,6 +32,64 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       emit(state.copyWith(status: CartStatus.error));
     }
   }
+
+  void _mapRemoveFromCartEventToState(RemoveFromCart event, Emitter<CartState> emit) {
+    try {
+      emit(state.copyWith(status: CartStatus.loading));
+
+      List<CartItem> updatedItems = List.from(state.items);
+      updatedItems.removeWhere((cartItem) => cartItem.id == event.item.id);
+
+      emit(state.copyWith(status: CartStatus.success, items: updatedItems));
+    } catch (error) {
+      emit(state.copyWith(status: CartStatus.error));
+    }
+  }
+
+  void _mapIncreaseQuantityEventToState(IncreaseQuantity event, Emitter<CartState> emit) {
+    try {
+      emit(state.copyWith(status: CartStatus.loading));
+
+      List<CartItem> updatedItems = List.from(state.items);
+      var existingIndex = updatedItems.indexWhere((cartItem) => cartItem.id == event.item.id);
+
+      if (existingIndex != -1) {
+        var existingItem = updatedItems[existingIndex];
+        updatedItems[existingIndex] = existingItem.copyWith(quantity: existingItem.quantity + 1);
+      }
+
+      emit(state.copyWith(status: CartStatus.success, items: updatedItems));
+    } catch (error) {
+      emit(state.copyWith(status: CartStatus.error));
+    }
+  }
+
+  void _mapDecreaseQuantityEventToState(DecreaseQuantity event, Emitter<CartState> emit) {
+    try {
+      emit(state.copyWith(status: CartStatus.loading));
+
+      List<CartItem> updatedItems = List.from(state.items);
+      var existingIndex = updatedItems.indexWhere((cartItem) => cartItem.id == event.item.id);
+
+      if (existingIndex != -1) {
+        var existingItem = updatedItems[existingIndex];
+        // Check if quantity is more than 1
+        if (existingItem.quantity > 1) {
+          updatedItems[existingIndex] = existingItem.copyWith(quantity: existingItem.quantity - 1);
+        } else {
+          // If the quantity is 1, remove the item from the cart
+          updatedItems.removeAt(existingIndex);
+        }
+      }
+
+      emit(state.copyWith(status: CartStatus.success, items: updatedItems));
+    } catch (error) {
+      emit(state.copyWith(status: CartStatus.error));
+    }
+  }
+
+
+
 
 // Add other event handling methods as needed
 }

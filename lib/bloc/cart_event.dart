@@ -14,4 +14,31 @@ class AddToCart extends CartEvent {
   List<Object> get props => [item];
 }
 
-// Add other events like RemoveFromCart, ClearCart, etc. as needed.
+class RemoveFromCart extends CartEvent {
+  final CartItem item;
+
+  RemoveFromCart(this.item);
+
+  @override
+  List<Object> get props => [item];
+}
+
+class IncreaseQuantity extends CartEvent {
+  final CartItem item;
+
+  IncreaseQuantity(this.item);
+
+  @override
+  List<Object> get props => [item];
+}
+
+class DecreaseQuantity extends CartEvent {
+  final CartItem item;
+
+  DecreaseQuantity(this.item);
+  @override
+  List<Object> get props => [item];
+}
+
+
+

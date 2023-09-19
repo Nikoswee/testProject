@@ -2,9 +2,19 @@ import 'package:flutter/material.dart';
 import '../../widgets/widgets.dart';
 import '../screens.dart';
 
+import 'package:flutter/material.dart';
+import '../../model/cart.dart'; // Import the CartItem model
+import '../../widgets/widgets.dart';
+import '../screens.dart';
+
 class PaymentScreen extends StatefulWidget {
   final bool isAuthenticated;
-  PaymentScreen({required this.isAuthenticated});
+  final List<CartItem> cartItems;  // Add cartItems
+
+  PaymentScreen({
+    required this.isAuthenticated,
+    required this.cartItems,  // Add cartItems
+  });
 
   @override
   _PaymentScreenState createState() => _PaymentScreenState();
@@ -15,19 +25,32 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Widget build(BuildContext context) {
     if (widget.isAuthenticated) {
       return Scaffold(
-        appBar: CustomAppBar(title: 'Payment'),
+        appBar: AppBar(title: Text('Payment')),
         bottomNavigationBar: CustomNavBar(),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Divider(height: 50),
+              SizedBox(height: 20),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: widget.cartItems.length,
+                  itemBuilder: (context, index) {
+                    final cartItem = widget.cartItems[index];
+                    return ListTile(
+                      title: Text(cartItem.name + " x" + cartItem.quantity.toString()),
+                      trailing: Text('\$${cartItem.price * cartItem.quantity}'), // Assuming the price is a double or int, adjust as needed
+                    );
+                  },
+                ),
+              ),
               Text('Successfully paid!'),
+              SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                    MaterialPageRoute(builder: (context) => StallsScreen()),
                   );
                 },
                 child: const Text('BACK'),
@@ -52,3 +75,4 @@ class _PaymentScreenState extends State<PaymentScreen> {
     }
   }
 }
+
