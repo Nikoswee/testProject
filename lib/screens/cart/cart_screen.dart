@@ -1,21 +1,20 @@
 import 'dart:async';
-
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:local_auth/local_auth.dart';
-import '../../bloc/cart_bloc.dart';
-import '../../bloc/cart_event.dart';
-import '../../bloc/cart_state.dart';
+import '../../bloc/cart_bloc/cart_bloc.dart';
+import '../../bloc/cart_bloc/cart_event.dart';
+import '../../bloc/cart_bloc/cart_state.dart';
 import '../../model/cart.dart';
 import '../../widgets/widgets.dart';
 import '../screens.dart';
 
-class CartScreen extends StatefulWidget {
 
-  final bool triggerConfirm;
-  CartScreen({this.triggerConfirm = false});
+@RoutePage()
+class CartScreen extends StatefulWidget {
 
   @override
   _CartScreenState createState() => _CartScreenState();
@@ -28,11 +27,11 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   void didChangeDependencies() {
-    auth = LocalAuthentication();
-    print("boolean triggerConfirm: ${widget.triggerConfirm}");
-    if (widget.triggerConfirm) {
-      _authenticate();
-    }
+    // auth = LocalAuthentication();
+    // print("boolean triggerConfirm: ${widget.triggerConfirm}");
+    // if (widget.triggerConfirm) {
+    //   _authenticate();
+    // }
     super.didChangeDependencies();
     final cartItems = context.read<CartBloc>().state.items;
     readCartItems(cartItems);

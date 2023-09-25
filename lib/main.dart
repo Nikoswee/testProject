@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_project/repo/cart_repo.dart';
-import 'bloc/cart_bloc.dart';
+import 'package:test_project/route/app_router.dart';
+import 'package:test_project/screens/cart/cart_screen.dart';
+import 'bloc/cart_bloc/cart_bloc.dart';
+import 'bloc/speech_bloc/speech_bloc.dart';
+import 'bloc/speech_bloc/speech_event.dart';
+import 'bloc/speech_bloc/speech_state.dart';
 import 'screens/screens.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
@@ -12,12 +17,20 @@ void main() async {
   final cartRepository = CartRepository(prefs);
 
   runApp(
-    BlocProvider(
-      create: (context) => CartBloc(cartRepository),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<CartBloc>(
+          create: (context) => CartBloc(cartRepository),
+        ),
+        BlocProvider<SpeechBloc>(
+          create: (context) => SpeechBloc(),
+        ),
+      ],
       child: const MyApp(),
     ),
   );
 }
+
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -27,65 +40,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late stt.SpeechToText _speech;
-  bool _isListening = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _speech = stt.SpeechToText();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Voice Order Application',
-      theme: ThemeData(
-        primarySwatch: Colors.grey,
-      ),
-      home: Builder(
-        builder: (context) => GestureDetector(
-          onLongPress: () async {
-            if (!_isListening) {
-              bool available = await _speech.initialize(onStatus: (status) {
-                if (status == "notListening") {
-                  setState(() {
-                    _isListening = false;
-                  });
-                }
-              });
-              if (available) {
-                setState(() {
-                  _isListening = true;
-                });
-                _speech.listen(onResult: (result) {
-                  print("Recognized Text: ${result.recognizedWords}");
-                  // Handle the recognized text here.
-                });
-                print("Started recording");  // Print message when recording starts
-              }
-            } else {
-              await Future.delayed(Duration(seconds: 1));
-              _speech.stop();
-              setState(() {
-                _isListening = false;
-              });
-            }
-          },
-          onLongPressEnd: (details) async {
-            if (_isListening) {
-              await Future.delayed(Duration(seconds: 1));
-              _speech.stop();
-              setState(() {
-                _isListening = false;
-              });
-              print("Stopped recording");  // Print message when recording stops
-            }
-          },
-          child: StallsScreen(),
-        ),
-      ),
+    AppRouter appRouter = AppRouter();
+    return MaterialApp.router(
+      routerConfig: appRouter.config(),
     );
+
   }
 }
 

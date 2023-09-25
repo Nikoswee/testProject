@@ -1,13 +1,14 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
-import '../../bloc/cart_bloc.dart';
-import '../../bloc/cart_event.dart';
+import '../../bloc/cart_bloc/cart_bloc.dart';
+import '../../bloc/cart_bloc/cart_event.dart';
 import '../../model/cart.dart';
 import '../cart/cart_screen.dart';
 
-
+@RoutePage()
 class FoodItemsScreen extends StatefulWidget {
   final String stallName;
 

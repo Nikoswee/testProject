@@ -1,5 +1,7 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:test_project/route/app_router.gr.dart';
 import '../cart/cart_screen.dart';
 import '../screens.dart';
 
@@ -7,10 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import '../screens.dart';
 
+@RoutePage()
 class StallsScreen extends StatefulWidget {
-
-  final bool triggerConfirm;
-  StallsScreen({this.triggerConfirm = false});
+  //
+  // final bool triggerConfirm;
+  // StallsScreen({this.triggerConfirm = false});
 
   @override
   _StallsScreenState createState() => _StallsScreenState();
@@ -55,7 +58,8 @@ class _StallsScreenState extends State<StallsScreen> {
           return ListTile(
             title: Text(stalls[index]),
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => FoodItemsScreen(stallName: stalls[index])));
+              context.router.push(FoodItemsRoute(stallName: stalls[index]));
+              // Navigator.push(context, MaterialPageRoute(builder: (context) => FoodItemsScreen(stallName: stalls[index])));
             },
           );
         },

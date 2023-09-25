@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/widgets.dart';
 import '../screens.dart';
@@ -7,6 +8,7 @@ import '../../model/cart.dart'; // Import the CartItem model
 import '../../widgets/widgets.dart';
 import '../screens.dart';
 
+@RoutePage()
 class PaymentScreen extends StatefulWidget {
   final bool isAuthenticated;
   final List<CartItem> cartItems;  // Add cartItems
