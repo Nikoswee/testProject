@@ -15,4 +15,9 @@ class SpeechState {
       text: text ?? this.text,
     );
   }
+
+  // Add a reset function
+  SpeechState resetText() {
+    return SpeechState(status: this.status, text: '');
+  }
 }

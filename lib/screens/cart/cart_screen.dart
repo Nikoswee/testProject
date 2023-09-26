@@ -8,7 +8,11 @@ import 'package:local_auth/local_auth.dart';
 import '../../bloc/cart_bloc/cart_bloc.dart';
 import '../../bloc/cart_bloc/cart_event.dart';
 import '../../bloc/cart_bloc/cart_state.dart';
+import '../../bloc/speech_bloc/speech_bloc.dart';
+import '../../bloc/speech_bloc/speech_event.dart';
+import '../../bloc/speech_bloc/speech_state.dart';
 import '../../model/cart.dart';
+import '../../route/app_router.gr.dart';
 import '../../widgets/widgets.dart';
 import '../screens.dart';
 
@@ -23,11 +27,13 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   final FlutterTts flutterTts = FlutterTts();
   late final LocalAuthentication auth;
+  bool payTriggered = false;
+  bool confirmTriggered = false;
 
 
   @override
   void didChangeDependencies() {
-    // auth = LocalAuthentication();
+    auth = LocalAuthentication();
     // print("boolean triggerConfirm: ${widget.triggerConfirm}");
     // if (widget.triggerConfirm) {
     //   _authenticate();
@@ -40,13 +46,55 @@ class _CartScreenState extends State<CartScreen> {
   void readCartItems(List<CartItem> cartItems) async {
     String intro = "The following items are in your cart: ";
     String combinedItems = cartItems.map((item) => "${item.name}, quantity: ${item.quantity}").join(", ");
+    Future.delayed(const Duration(milliseconds: 500));
     await flutterTts.speak(intro + combinedItems);
   }
 
+  double calculateTotal(List<CartItem> cartItems) {
+    return cartItems.fold(0.0, (sum, item) => sum + (item.price * item.quantity));
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return BlocListener<SpeechBloc, SpeechState>(
+        listener: (context, speechState) async {
+          if (speechState.status == SpeechStatus.receivedSpeech && speechState.text.isNotEmpty) {
+            if (speechState.text.toLowerCase().contains("pay")) {
+              setState(() {
+                payTriggered = true;
+              });
+            }
+          }
+
+          if (payTriggered && speechState.status == SpeechStatus.notListening){
+            final cartItems = context.read<CartBloc>().state.items;
+            final total = calculateTotal(cartItems);
+            await flutterTts.speak("Your total amount is $total. Please confirm if you'd like to proceed with the payment.");
+          }
+          if(payTriggered && speechState.status == SpeechStatus.receivedSpeech && speechState.text.isNotEmpty){
+            if (speechState.text.toLowerCase().contains("confirm")) {
+              setState(() {
+                confirmTriggered = true;
+              });
+            }
+          }
+          if (payTriggered && confirmTriggered && speechState.status == SpeechStatus.notListening){
+            await flutterTts.speak("Please authenticate with either biometric or facial recognition");
+            _authenticate();
+            setState(() {
+              confirmTriggered = false;
+              payTriggered = false;
+            });
+          }
+        },
+        child: GestureDetector(
+        onLongPress: () {
+      context.read<SpeechBloc>().add(StartListening());
+    },
+    onLongPressUp: () {
+    context.read<SpeechBloc>().add(StopListening());
+    },
+    child: Scaffold(
       appBar: AppBar(title: Text("Cart"),
           actions: [
     IconButton(
@@ -101,6 +149,7 @@ class _CartScreenState extends State<CartScreen> {
         },
         child: Text('Confirm Order'),
       ),
+    ),),
     );
   }
 
@@ -119,12 +168,7 @@ class _CartScreenState extends State<CartScreen> {
 
         if (authenticated) {
           final cartItems = context.read<CartBloc>().state.items; // Get the cart items
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PaymentScreen(isAuthenticated: true, cartItems: cartItems),
-            ),
-          );
+          context.router.push(PaymentRoute(isAuthenticated: true, cartItems: cartItems));
         }
 
       }

@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import '../../route/app_router.gr.dart';
 import '../../widgets/widgets.dart';
 import '../screens.dart';
 
@@ -50,10 +51,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => StallsScreen()),
-                  );
+                  context.router.push(StallsRoute());
                 },
                 child: const Text('BACK'),
               ),
